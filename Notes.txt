@@ -1,0 +1,12 @@
+Android source dmesg info
+
+Resolution (800 x 480 ), finger_num=10, key_num=0
+
+Firmware seems to be:
+[  871.070255] [ZET] RST = LOW
+[  871.070625] [ZET]: find /vendor/modules/zet62xx.bin
+[  871.070708] [ZET]: Load from /vendor/modules/zet62xx.bin
+[  871.218034] [VFE]mclk off
+
+
+Datasheet http://linux-sunxi.org/images/2/22/ZP-HW-PS-0003_ZET6221_Product_Spec_v1_2.pdf
