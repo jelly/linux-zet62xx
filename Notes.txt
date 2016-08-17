@@ -1,4 +1,5 @@
 Android source dmesg info
+--------------------------
 
 Resolution (800 x 480 ), finger_num=10, key_num=0
 
@@ -9,4 +10,33 @@ Firmware seems to be:
 [  871.218034] [VFE]mclk off
 
 
-Datasheet http://linux-sunxi.org/images/2/22/ZP-HW-PS-0003_ZET6221_Product_Spec_v1_2.pdf
+Datasheet
+---------
+
+http://linux-sunxi.org/images/2/22/ZP-HW-PS-0003_ZET6221_Product_Spec_v1_2.pdf
+
+
+I2C Detection
+-------------
+
+Detection of slave address.
+
+$ i2cdetect -y 0
+
+Slave address 0x76.
+
+Fex file
+---------
+
+[ctp_para]
+ctp_used = 1
+ctp_name = "zet6221-ts"
+ctp_twi_id = 0
+ctp_twi_addr = 0x76
+ctp_screen_max_x = 800
+ctp_screen_max_y = 480
+ctp_revert_x_flag = 0
+ctp_revert_y_flag = 0
+ctp_exchange_x_y_flag = 0
+ctp_int_port = port:PB05<4><default><default><default>
+ctp_wakeup = port:PH01<1><default><default><1>
