@@ -15,6 +15,44 @@ Datasheet
 
 http://linux-sunxi.org/images/2/22/ZP-HW-PS-0003_ZET6221_Product_Spec_v1_2.pdf
 
+To get I2C working
+------------------
+
+Add the following to the dts file for your tablet, dts file I used was:
+sun8i-a23-q8-tablet.dts
+
+&i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c0_pins_a>;
+	status = "okay";
+
+	//clock-frequency = <400000>;
+
+	zet62xx: touchscreen@76 {
+		 compatible = "zeitec,zet62xx";
+		 reg = <0x76>;
+		 interrupt-parent = <&pio>;
+		 interrupts = <1 5 IRQ_TYPE_EDGE_FALLING>; /* PB5 */
+		 pinctrl-names = "default";
+		 pinctrl-0 = <&ts_power_pin_mid2407>;
+		 power-gpios = <&pio 7 1 GPIO_ACTIVE_HIGH>; /* PH1 */
+		 touchscreen-size-x = <800>;
+		 touchscreen-size-y = <480>;
+		 touchscreen-inverted-x;
+		 touchscreen-inverted-y;
+		 touchscreen-max-fingers = <5>;
+		 touchscreen-fw-name = "zeitec/zet62xx.fw";
+	};
+};
+
+&pio {
+	ts_power_pin_mid2407: ts_power_pin@0 {
+		allwinner,pins = "PH1";
+		allwinner,function = "gpio_out";
+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+	};
+};
 
 I2C Detection
 -------------
@@ -40,3 +78,5 @@ ctp_revert_y_flag = 0
 ctp_exchange_x_y_flag = 0
 ctp_int_port = port:PB05<4><default><default><default>
 ctp_wakeup = port:PH01<1><default><default><1>
+
+
