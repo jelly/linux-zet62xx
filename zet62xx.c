@@ -15,16 +15,25 @@
 #include <linux/i2c.h>
 #include <linux/module.h>
 
-#define ZET62_TS_NAME "zet62_ts"
+#define ZET62_TS_NAME "zet62xx"
+
+static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id *id)
+{
+	dev_info(&client->dev, "zet62_ts_probe\n");
+
+	return 0;
+}
 
 static const struct i2c_device_id zet62_id[] = {
 	{ "zet62_ts", 0},
+	{ "zet62xx", 0},
 	{ }
 };
 
 MODULE_DEVICE_TABLE(i2c, zet62_id);
 
 static struct i2c_driver zet62_ts_driver = {
+	.probe = zet62_ts_probe,
 	.driver = {
 		.name = ZET62_TS_NAME
 	},
