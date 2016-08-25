@@ -19,7 +19,10 @@
 
 static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
-	dev_info(&client->dev, "zet62_ts_probe\n");
+	struct device *dev = &client->dev;
+
+	dev_info(dev, "zet62_ts_probe\n");
+
 
 	return 0;
 }
