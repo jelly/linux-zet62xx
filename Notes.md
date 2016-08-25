@@ -66,6 +66,7 @@ Slave address 0x76.
 Fex file
 ---------
 
+```
 [ctp_para]
 ctp_used = 1
 ctp_name = "zet6221-ts"
@@ -78,6 +79,7 @@ ctp_revert_y_flag = 0
 ctp_exchange_x_y_flag = 0
 ctp_int_port = port:PB05<4><default><default><default>
 ctp_wakeup = port:PH01<1><default><default><1>
+```
 
 Protocol
 --------
