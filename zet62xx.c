@@ -23,9 +23,18 @@
 static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
 	struct device *dev = &client->dev;
+	struct input_dev *input;
 
 	dev_info(dev, "zet62_ts_probe\n");
 
+	input = devm_input_allocate_device(dev);
+	if (!input)
+		return -ENOMEM;
+
+	input->name = client->name;
+	input->id.bustype = BUS_I2C;
+	input->dev.parent = dev;
+	
 
 	return 0;
 }
