@@ -13,6 +13,9 @@
  */
 
 #include <linux/i2c.h>
+#include <linux/input.h>
+#include <linux/input/mt.h>
+#include <linux/input/touchscreen.h>
 #include <linux/module.h>
 
 #define ZET62_TS_NAME "zet62xx"
