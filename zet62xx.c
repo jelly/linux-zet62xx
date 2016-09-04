@@ -126,8 +126,6 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 		return ret;
 	}
 
-	enable_irq(client->irq);
-
 	ret = input_register_device(input);
 	if (ret)
 		return ret;
