@@ -21,6 +21,7 @@ To get I2C working
 Add the following to the dts file for your tablet, dts file I used was:
 sun8i-a23-q8-tablet.dts
 
+```
 &i2c0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c0_pins_a>;
@@ -53,6 +54,7 @@ sun8i-a23-q8-tablet.dts
 		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
 	};
 };
+```
 
 For the sun5i a13 inet 98v rev2
 
