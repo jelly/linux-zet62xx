@@ -56,7 +56,8 @@ sun8i-a23-q8-tablet.dts
 };
 ```
 
-For the sun5i a13 inet 98v rev2
+The sun5i a13 inet 98v rev2 features a ZET6223 which does not require custom
+firmware to be loaded into the device.
 
 ```
 &i2c1 {
