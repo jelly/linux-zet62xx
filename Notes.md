@@ -54,12 +54,36 @@ sun8i-a23-q8-tablet.dts
 	};
 };
 
+For the sun5i a13 inet 98v rev2
+
+```
+&i2c1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins_a>;
+	status = "okay";
+
+	pcf8563: rtc@51 {
+		compatible = "nxp,pcf8563";
+		reg = <0x51>;
+	};
+
+	zet62xx: touchscreen@76 {
+		 compatible = "zeitec,zet62xx";
+		 reg = <0x76>;
+		 interrupt-parent = <&pio>;
+		 interrupts = <6 11 IRQ_TYPE_EDGE_FALLING>; /* PG11 */
+		 power-gpios = <&pio 1 3 GPIO_ACTIVE_HIGH>; /* PB3 */
+		 touchscreen-fw-name = "zeitec/zet62xx.fw";
+	};
+};
+```
+
 I2C Detection
 -------------
 
-Detection of slave address.
+Detection of slave address. (Or 1 for the a13 inet 98v rev2)
 
-$ i2cdetect -y 0
+$ i2cdetect -y 0 
 
 Slave address 0x76.
 
