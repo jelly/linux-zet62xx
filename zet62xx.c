@@ -12,13 +12,11 @@
  *  more details.
  */
 
-#include <linux/gpio/consumer.h>
 #include <linux/interrupt.h>
 #include <linux/i2c.h>
 #include <linux/input.h>
 #include <linux/input/mt.h>
 #include <linux/input/touchscreen.h>
-#include <linux/of.h>
 #include <linux/module.h>
 
 #define ZET62_TS_NAME "zet62xx"
@@ -135,12 +133,6 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	return 0;
 }
 
-static const struct of_device_id zet62_of_match[] = {
-	{ .compatible = "zeitec,zet62xx" },
-	{ }
-};
-MODULE_DEVICE_TABLE(of, zet62_of_match);
-
 static const struct i2c_device_id zet62_id[] = {
 	{ "zet62_ts", 0},
 	{ "zet62xx", 0},
@@ -151,7 +143,6 @@ MODULE_DEVICE_TABLE(i2c, zet62_id);
 static struct i2c_driver zet62_ts_driver = {
 	.driver = {
 		.name = ZET62_TS_NAME,
-		.of_match_table = of_match_ptr(zet62_of_match),
 	},
 	.probe = zet62_ts_probe,
 	.id_table = zet62_id
