@@ -90,7 +90,7 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	max_y = buf[11] & 0xff;
 	max_y = (max_y << 8) | (buf[10] & 0xff);
 
-	fingernum = buf[15] && 0x7f;
+	fingernum = buf[15] & 0x7f;
 	dev_info(dev, "resolution-x: %d, resolution-y: %d, fingernum: %d\n", max_x, max_y, fingernum);
 
 	input = devm_input_allocate_device(dev);
