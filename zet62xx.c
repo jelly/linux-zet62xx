@@ -115,7 +115,6 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	data->input = input;
 
 	input_set_drvdata(input, data);
-	dev_info(dev, "client->irq %d\n", client->irq);
 
 	ret = devm_request_threaded_irq(dev, client->irq, NULL, irqreturn_t_zet62xx,
 					  IRQF_ONESHOT, client->name, data);
