@@ -121,3 +121,7 @@ printf("resolution x: %d, y: %d, keynum: %d, fingernum: %d\n", resolutioo
 
 ```
 
+Linux error codes
+-----------------
+
+Linux error codes can be found in usr/include/asm-generic/errno-base.h and errno.h
