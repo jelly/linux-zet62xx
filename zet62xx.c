@@ -27,6 +27,7 @@ struct zet62xx_data {
 	struct i2c_client *client;
 	struct input_dev *input;
 	struct touchscreen_properties prop;
+	u8 buf_length; /* length received data from interrupt */
 };
 
 static int zet62_ts_start(struct input_dev *dev)
@@ -91,6 +92,8 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	max_y = (max_y << 8) | (buf[10] & 0xff);
 
 	fingernum = buf[15] & 0x7f;
+	data->buf_length = 3 + 4 * finger_num
+
 	dev_info(dev, "resolution-x: %d, resolution-y: %d, fingernum: %d\n", max_x, max_y, fingernum);
 
 	input = devm_input_allocate_device(dev);
