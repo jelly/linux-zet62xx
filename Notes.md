@@ -148,6 +148,18 @@ printf("resolution x: %d, y: %d, keynum: %d, fingernum: %d\n", resolutioo
 
 ```
 
+Input data
+----------
+
+The first byte contains the control number, 0x3C if the data is valid.
+The second and third bytes contain the touches. For example:
+0x80 - One touch
+0xC0 - Two touches
+0xC4 - Three touches.
+
+For the first touch (finger) the X axis is the 4 bits MSB of byte 3 and 8 bits of byte 4.
+Y axis is the 4 bit LSB of byte 3 and 8 bits of byte 5.
+
 Linux error codes
 -----------------
 
