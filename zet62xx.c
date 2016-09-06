@@ -50,24 +50,25 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	struct input_mt_pos touches[10];
 	int ret;
 	int slots[10];
+	// First 3 bytes are an identifier, two bytes of finger data.
+	// X, Y data per fnger is 4 bytes.
 	u8 bufsize = 3 + 4 * data->fingernum;
 	u8 buf[bufsize];
 	u8 i;
-	u16 x, y;
 	u8 size = 0;
 
 	ret = i2c_master_recv(data->client, buf, bufsize);
+	if (ret != bufsize) {
+		return IRQ_HANDLED;
+	}
 
 	if (buf[0] == 0x3c) {
 		for (i = 0; i < data->fingernum; i++) {
 			if (!(buf[i / 8 + 1] & (0x80 >> (i % 8))))
 				continue;
 
-			x = ((buf[i + 3] >> 4) << 8) + buf[i + 4];
-			y = ((buf[i + 3] & 0xF) << 8) + buf[i + 5];
-
-			touches[i].x = x;
-			touches[i].y = y;
+			touches[i].x = ((buf[i + 3] >> 4) << 8) + buf[i + 4];
+			touches[i].y = ((buf[i + 3] & 0xF) << 8) + buf[i + 5];
 
 			size++;
 		}
