@@ -34,7 +34,6 @@ struct zet62xx_data {
 static int zet62_ts_start(struct input_dev *dev)
 {
 		struct zet62xx_data *data = input_get_drvdata(dev);
-		dev_info(&data->client->dev, "ts_start\n");
 
 		return 0;
 }
@@ -93,21 +92,19 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 		return -EINVAL;
 	}
 
-	dev_info(dev, "zet62_ts_probe\n");
-
 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
 
 	ret = i2c_master_send(client, &cmd, 1);
 	if (ret < 0) {
-		dev_err(dev, "touchpanel info cmd failed : %d\n", ret);
+		dev_err(dev, "touchpanel info cmd failed: %d\n", ret);
 		return -ENODEV;
 	}
 
 	ret = i2c_master_recv(client, buf, ZET62_CMD_INFO_LENGTH);
 	if (ret < 0) {
-		dev_err(dev, "cannot retrieve touchpanel info data : %d\n", ret);
+		dev_err(dev, "cannot retrieve touchpanel info data:  %d\n", ret);
 		return -ENODEV;
 	}
 
@@ -119,8 +116,6 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 
 	fingernum = buf[15] & 0x7f;
 	data->fingernum = fingernum;
-
-	dev_info(dev, "resolution-x: %d, resolution-y: %d, fingernum: %d\n", max_x, max_y, fingernum);
 
 	input = devm_input_allocate_device(dev);
 	if (!input)
