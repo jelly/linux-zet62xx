@@ -46,7 +46,6 @@ static void zet62_ts_stop(struct input_dev *dev)
 static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 {
 	struct zet62xx_data *data = dev_id;
-	struct device *dev = &data->client->dev;
 	struct input_mt_pos touches[10];
 	int ret;
 	int slots[10];
