@@ -48,7 +48,8 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 {
 	struct zet62xx_data *data = dev_id;
 	struct device *dev = &data->client->dev;
-	struct input_mt_pos touches[10];
+	u8 bufsize = 3 + 4 * data->fingernum;
+	struct input_mt_pos touches[bufsize];
 	int slots[10];
 	u8 buf[17];
 	int ret;
@@ -56,7 +57,7 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	u16 x, y;
 	int size = 0;
 
-	ret = i2c_master_recv(data->client, buf, 17);
+	ret = i2c_master_recv(data->client, buf, bufsize);
 
 	if (buf[0] == 0x3c) {
 		for (i = 0; i < data->fingernum; i++) {
