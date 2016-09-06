@@ -13,6 +13,7 @@
  */
 
 #include <asm/unaligned.h>
+#include <linux/gpio/consumer.h>
 #include <linux/interrupt.h>
 #include <linux/i2c.h>
 #include <linux/input.h>
@@ -25,6 +26,7 @@
 #define ZET6223_VALID_PACKET 0x3c
 
 struct zet6223_data {
+	struct gpio_desc *power_gpios;
 	struct i2c_client *client;
 	struct input_dev *input;
 	struct touchscreen_properties prop;
@@ -90,7 +92,7 @@ static int zet6223_probe(struct i2c_client *client,
 	struct input_dev *input;
 	u8 buf[ZET6223_CMD_INFO_LENGTH];
 	u8 cmd = ZET6223_CMD_INFO;
-	int ret;
+	int ret, error;
 
 	if (!client->irq) {
 		dev_err(dev, "Error no irq specified\n");
@@ -100,6 +102,14 @@ static int zet6223_probe(struct i2c_client *client,
 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
+
+	data->power_gpios = devm_gpiod_get(dev, "power", GPIOD_OUT_HIGH);
+	if (IS_ERR(data->power_gpios)) {
+		error = PTR_ERR(data->power_gpios);
+		if (error != -EPROBE_DEFER)
+			dev_err(dev, "Error getting power gpio: %d\n", error);
+		return error;
+	}
 
 	ret = i2c_master_send(client, &cmd, 1);
 	if (ret < 0) {
