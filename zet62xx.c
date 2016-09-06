@@ -24,28 +24,28 @@
 #define ZET62_CMD_INFO_LENGTH 17
 #define ZET62_VALID_PACKET 0x3c
 
-struct zet62xx_data {
+struct zet6223_data {
 	struct i2c_client *client;
 	struct input_dev *input;
 	struct touchscreen_properties prop;
 	u8 fingernum;
 };
 
-static int zet62_ts_start(struct input_dev *dev)
+static int zet6223_start(struct input_dev *dev)
 {
-		struct zet62xx_data *data = input_get_drvdata(dev);
+		struct zet6223_data *data = input_get_drvdata(dev);
 
 		return 0;
 }
 
-static void zet62_ts_stop(struct input_dev *dev)
+static void zet6223_stop(struct input_dev *dev)
 {
-		struct zet62xx_data *data = input_get_drvdata(dev);
+		struct zet6223_data *data = input_get_drvdata(dev);
 }
 
-static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
+static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 {
-	struct zet62xx_data *data = dev_id;
+	struct zet6223_data *data = dev_id;
 	// First 3 bytes are an identifier, two bytes of finger data.
 	// X, Y data per finger is 4 bytes.
 	u8 bufsize = 3 + 4 * data->fingernum;
@@ -78,10 +78,10 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
-static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id *id)
+static int zet6223_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
 	struct device *dev = &client->dev;
-	struct zet62xx_data *data;
+	struct zet6223_data *data;
 	struct input_dev *input;
 	u8 buf[ZET62_CMD_INFO_LENGTH];
 	u8 cmd = ZET62_CMD_INFO;
@@ -123,8 +123,8 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	input->name = client->name;
 	input->id.bustype = BUS_I2C;
 	input->dev.parent = dev;
-	input->open = zet62_ts_start;
-	input->close = zet62_ts_stop;
+	input->open = zet6223_start;
+	input->close = zet6223_stop;
 
 	ret = input_mt_init_slots(input, data->fingernum,
 		INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED | INPUT_MT_TRACK);
@@ -136,7 +136,7 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 
 	input_set_drvdata(input, data);
 
-	ret = devm_request_threaded_irq(dev, client->irq, NULL, irqreturn_t_zet62xx,
+	ret = devm_request_threaded_irq(dev, client->irq, NULL, irqreturn_t_zet6223,
 					  IRQF_ONESHOT, client->name, data);
 	if (ret) {
 		dev_err(dev, "Error requesting irq: %d\n", ret);
@@ -152,22 +152,21 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	return 0;
 }
 
-static const struct i2c_device_id zet62_id[] = {
-	{ "zet62_ts", 0},
-	{ "zet62xx", 0},
+static const struct i2c_device_id zet6223_id[] = {
+	{ "zet6223", 0},
 	{ }
 };
-MODULE_DEVICE_TABLE(i2c, zet62_id);
+MODULE_DEVICE_TABLE(i2c, zet6223_id);
 
-static struct i2c_driver zet62_ts_driver = {
+static struct i2c_driver zet6223_driver = {
 	.driver = {
-		.name = "zet62xx",
+		.name = "zet6223",
 	},
-	.probe = zet62_ts_probe,
-	.id_table = zet62_id
+	.probe = zet6223_probe,
+	.id_table = zet6223_id
 };
 
-module_i2c_driver(zet62_ts_driver);
+module_i2c_driver(zet6223_driver);
 
 MODULE_AUTHOR("Jelle van der Waa <jelle@vdwaa.nl>");
 MODULE_DESCRIPTION("ZEITEC zet622x I2C touchscreen driver");
