@@ -75,7 +75,6 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 		input_mt_assign_slots(data->input, slots, touches, size, 0);
 
 		for (i = 0; i < size; i++) {
-
 			input_mt_slot(data->input, slots[i]);
 			input_mt_report_slot_state(data->input, MT_TOOL_FINGER, true);
 			input_event(data->input, EV_ABS, ABS_MT_POSITION_X, touches[i].x);
