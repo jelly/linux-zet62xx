@@ -85,7 +85,6 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	struct input_dev *input;
 	u8 buf[ZET62_CMD_INFO_LENGTH];
 	u8 cmd = ZET62_CMD_INFO;
-	u16 max_x, max_y;
 	int ret;
 
 	if (!client->irq) {
@@ -109,17 +108,16 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 		return -ENODEV;
 	}
 
-	max_x = get_unaligned_le16(&buf[8]);
-	max_y = get_unaligned_le16(&buf[10]);
-
 	data->fingernum = buf[15] & 0x7F;
 
 	input = devm_input_allocate_device(dev);
 	if (!input)
 		return -ENOMEM;
 
-	input_set_abs_params(input, ABS_MT_POSITION_X, 0, max_x, 0, 0);
-	input_set_abs_params(input, ABS_MT_POSITION_Y, 0, max_y, 0, 0);
+	input_set_abs_params(input, ABS_MT_POSITION_X, 0,
+			get_unaligned_le16(&buf[8]), 0, 0);
+	input_set_abs_params(input, ABS_MT_POSITION_Y, 0,
+			get_unaligned_le16(&buf[10]), 0, 0);
 	touchscreen_parse_properties(input, true, &data->prop);
 
 	input->name = client->name;
