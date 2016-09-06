@@ -154,7 +154,7 @@ static int zet6223_probe(struct i2c_client *client, const struct i2c_device_id *
 
 static const struct i2c_device_id zet6223_id[] = {
 	{ "zet6223", 0},
-	{ }
+	{}
 };
 MODULE_DEVICE_TABLE(i2c, zet6223_id);
 
