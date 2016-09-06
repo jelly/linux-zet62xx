@@ -34,7 +34,7 @@ struct zet6223_data {
 static int zet6223_start(struct input_dev *dev)
 {
 		struct zet6223_data *data = input_get_drvdata(dev);
-		
+
 		enable_irq(data->client->irq);
 
 		return 0;
@@ -82,7 +82,8 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
-static int zet6223_probe(struct i2c_client *client, const struct i2c_device_id *id)
+static int zet6223_probe(struct i2c_client *client,
+			const struct i2c_device_id *id)
 {
 	struct device *dev = &client->dev;
 	struct zet6223_data *data;
@@ -108,7 +109,7 @@ static int zet6223_probe(struct i2c_client *client, const struct i2c_device_id *
 
 	ret = i2c_master_recv(client, buf, ZET6223_CMD_INFO_LENGTH);
 	if (ret < 0) {
-		dev_err(dev, "cannot retrieve touchpanel info data:  %d\n", ret);
+		dev_err(dev, "cannot retrieve touchpanel info:  %d\n", ret);
 		return -ENODEV;
 	}
 
@@ -140,8 +141,8 @@ static int zet6223_probe(struct i2c_client *client, const struct i2c_device_id *
 
 	input_set_drvdata(input, data);
 
-	ret = devm_request_threaded_irq(dev, client->irq, NULL, irqreturn_t_zet6223,
-					  IRQF_ONESHOT, client->name, data);
+	ret = devm_request_threaded_irq(dev, client->irq, NULL,
+			irqreturn_t_zet6223, IRQF_ONESHOT, client->name, data);
 	if (ret) {
 		dev_err(dev, "Error requesting irq: %d\n", ret);
 		return ret;
