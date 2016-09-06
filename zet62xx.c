@@ -136,7 +136,8 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	input->open = zet62_ts_start;
 	input->close = zet62_ts_stop;
 
-	ret = input_mt_init_slots(input, fingernum, INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED | INPUT_MT_TRACK);
+	ret = input_mt_init_slots(input, fingernum,
+		INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED | INPUT_MT_TRACK);
 	if (ret)
 		return ret;
 
