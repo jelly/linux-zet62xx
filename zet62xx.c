@@ -49,9 +49,9 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	struct zet62xx_data *data = dev_id;
 	struct device *dev = &data->client->dev;
 	u8 bufsize = 3 + 4 * data->fingernum;
-	struct input_mt_pos touches[bufsize];
+	struct input_mt_pos touches[10];
 	int slots[10];
-	u8 buf[17];
+	u8 buf[bufsize];
 	int ret;
 	int i;
 	u16 x, y;
