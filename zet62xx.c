@@ -19,7 +19,6 @@
 #include <linux/input/touchscreen.h>
 #include <linux/module.h>
 
-#define ZET62_TS_NAME "zet62xx"
 #define ZET62_CMD_INFO 0xB2
 #define ZET62_CMD_INFO_LENGTH 17
 #define ZET62_VALID_PACKET 0x3c
@@ -166,7 +165,7 @@ MODULE_DEVICE_TABLE(i2c, zet62_id);
 
 static struct i2c_driver zet62_ts_driver = {
 	.driver = {
-		.name = ZET62_TS_NAME,
+		.name = "zet62xx",
 	},
 	.probe = zet62_ts_probe,
 	.id_table = zet62_id
