@@ -51,7 +51,7 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	int ret;
 	int slots[10];
 	// First 3 bytes are an identifier, two bytes of finger data.
-	// X, Y data per fnger is 4 bytes.
+	// X, Y data per finger is 4 bytes.
 	u8 bufsize = 3 + 4 * data->fingernum;
 	u8 buf[bufsize];
 	u8 i;
