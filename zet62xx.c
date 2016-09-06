@@ -84,10 +84,9 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	struct zet62xx_data *data;
 	struct input_dev *input;
 	u8 buf[ZET62_CMD_INFO_LENGTH];
-	u8 axis[2];
 	u8 cmd = ZET62_CMD_INFO;
 	u16 max_x, max_y;
-	int ret, fingernum;
+	int ret;
 
 	if (!client->irq) {
 		dev_err(dev, "Error no irq specified\n");
@@ -110,16 +109,10 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 		return -ENODEV;
 	}
 
-	axis[0] = buf[8];
-	axis[1] = buf[9];
-	max_x = get_unaligned_le16(axis);
+	max_x = get_unaligned_le16(&buf[8]);
+	max_y = get_unaligned_le16(&buf[10]);
 
-	axis[0] = buf[10];
-	axis[1] = buf[11];
-	max_y = get_unaligned_le16(axis);
-
-	fingernum = buf[15] & 0x7f;
-	data->fingernum = fingernum;
+	data->fingernum = buf[15] & 0x7F;
 
 	input = devm_input_allocate_device(dev);
 	if (!input)
@@ -135,7 +128,7 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	input->open = zet62_ts_start;
 	input->close = zet62_ts_stop;
 
-	ret = input_mt_init_slots(input, fingernum,
+	ret = input_mt_init_slots(input, data->fingernum,
 		INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED | INPUT_MT_TRACK);
 	if (ret)
 		return ret;
