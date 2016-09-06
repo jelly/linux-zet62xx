@@ -46,9 +46,9 @@ static void zet62_ts_stop(struct input_dev *dev)
 static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 {
 	struct zet62xx_data *data = dev_id;
-	struct input_mt_pos touches[10];
+	struct input_mt_pos touches[data->fingernum];
 	int ret;
-	int slots[10];
+	int slots[data->fingernum];
 	// First 3 bytes are an identifier, two bytes of finger data.
 	// X, Y data per finger is 4 bytes.
 	u8 bufsize = 3 + 4 * data->fingernum;
