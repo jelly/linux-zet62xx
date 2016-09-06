@@ -59,22 +59,23 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 		return IRQ_HANDLED;
 	}
 
-	if (buf[0] == ZET62_VALID_PACKET) {
-		for (i = 0; i < data->fingernum; i++) {
-			if (!(buf[i / 8 + 1] & (0x80 >> (i % 8))))
-				continue;
+	if (buf[0] != ZET62_VALID_PACKET)
+		return IRQ_HANDLED;
 
-			input_mt_slot(data->input, i);
-			input_mt_report_slot_state(data->input, MT_TOOL_FINGER, true);
-			input_event(data->input, EV_ABS, ABS_MT_POSITION_X,
-					((buf[i + 3] >> 4) << 8) + buf[i + 4]);
-			input_event(data->input, EV_ABS, ABS_MT_POSITION_Y,
-					((buf[i + 3] & 0xF) << 8) + buf[i + 5]);
-		}
+	for (i = 0; i < data->fingernum; i++) {
+		if (!(buf[i / 8 + 1] & (0x80 >> (i % 8))))
+			continue;
 
-		input_mt_sync_frame(data->input);
-		input_sync(data->input);
+		input_mt_slot(data->input, i);
+		input_mt_report_slot_state(data->input, MT_TOOL_FINGER, true);
+		input_event(data->input, EV_ABS, ABS_MT_POSITION_X,
+				((buf[i + 3] >> 4) << 8) + buf[i + 4]);
+		input_event(data->input, EV_ABS, ABS_MT_POSITION_Y,
+				((buf[i + 3] & 0xF) << 8) + buf[i + 5]);
 	}
+
+	input_mt_sync_frame(data->input);
+	input_sync(data->input);
 
 	return IRQ_HANDLED;
 }
