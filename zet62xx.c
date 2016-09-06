@@ -84,8 +84,6 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 
 		input_mt_sync_frame(data->input);
 		input_sync(data->input);
-	} else {
-		dev_info(dev, "invalid data\n");
 	}
 
 	return IRQ_HANDLED;
