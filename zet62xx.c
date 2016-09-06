@@ -57,8 +57,6 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	u16 x, y;
 	int size = 0;
 
-	dev_info(dev, "irqreturn!\n");
-
 	ret = i2c_master_recv(data->client, buf, 17);
 
 	if (buf[0] == 0x3c) {
