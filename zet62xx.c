@@ -28,6 +28,7 @@ struct zet62xx_data {
 	struct input_dev *input;
 	struct touchscreen_properties prop;
 	u8 buf_length; /* length received data from interrupt */
+	u8 fingernum;
 };
 
 static int zet62_ts_start(struct input_dev *dev)
@@ -54,37 +55,38 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	u32 finger_num = 0x0;
 	int i;
 	u16 x, y;
+	int size = 0;
 
 	dev_info(dev, "irqreturn!\n");
 
 	ret = i2c_master_recv(data->client, buf, 17);
 
 	if (buf[0] == 0x3c) {
-		#if 0
-		for (i = 0; i < 8; i++) {
-			dev_info(dev, "%02x ", buf[i]);
+		for (i = 0; i < data->fingernum; i++) {
+			if (!(buf[i / 8 + 1] & (0x80 >> (i % 8))))
+				continue;
+
+			x = ((buf[i + 3] >> 4) << 8) + buf[i + 4];
+			y = ((buf[i + 3] & 0xF) << 8) + buf[i + 5];
+
+			touches[i].x = x;
+			touches[i].y = y;
+
+			size++;
 		}
-		#endif
-		dev_info(dev, "\n");
-		if (buf[1] == 0x80) { // One finger
-			// X is MSB 4 bits of Byte3 and 8 bits of Byte4
-			x = ((buf[3] >> 4) << 8) + buf[4]; //
-			y = ((buf[3] & 0xF) << 8) + buf[5];
-			touches[0].x = x;
-			touches[0].y = y;
-			input_mt_assign_slots(data->input, slots, touches, 1, 0);
-			input_mt_slot(data->input, slots[0]);
+
+		input_mt_assign_slots(data->input, slots, touches, size, 0);
+
+		for (i = 0; i < size; i++) {
+
+			input_mt_slot(data->input, slots[i]);
 			input_mt_report_slot_state(data->input, MT_TOOL_FINGER, true);
-
-			input_event(data->input, EV_ABS, ABS_MT_POSITION_X, x);
-			input_event(data->input, EV_ABS, ABS_MT_POSITION_Y, y);
-
-
-			input_mt_sync_frame(data->input);
-			input_sync(data->input);
-			dev_info(dev,"x: %d, y: %d\n", x, y );
+			input_event(data->input, EV_ABS, ABS_MT_POSITION_X, touches[i].x);
+			input_event(data->input, EV_ABS, ABS_MT_POSITION_Y, touches[i].y);
 		}
 
+		input_mt_sync_frame(data->input);
+		input_sync(data->input);
 	} else {
 		dev_info(dev, "invalid data\n");
 	}
@@ -133,6 +135,7 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 
 	fingernum = buf[15] & 0x7f;
 	data->buf_length = 3 + 4 * fingernum;
+	data->fingernum = fingernum;
 
 	dev_info(dev, "resolution-x: %d, resolution-y: %d, fingernum: %d\n", max_x, max_y, fingernum);
 
