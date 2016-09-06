@@ -20,8 +20,8 @@
 #include <linux/module.h>
 
 #define ZET62_TS_NAME "zet62xx"
-#define CMD_INFO 0xB2
-#define CMD_INFO_LENGTH 17
+#define ZET62_CMD_INFO 0xB2
+#define ZET62_CMD_INFO_LENGTH 17
 #define ZET62_VALID_PACKET 0x3c
 
 struct zet62xx_data {
@@ -94,8 +94,8 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 	struct device *dev = &client->dev;
 	struct zet62xx_data *data;
 	struct input_dev *input;
-	u8 buf[CMD_INFO_LENGTH];
-	u8 cmd = CMD_INFO;
+	u8 buf[ZET62_CMD_INFO_LENGTH];
+	u8 cmd = ZET62_CMD_INFO;
 	int ret, max_x, max_y, fingernum;
 
 	if (!client->irq) {
