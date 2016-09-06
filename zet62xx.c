@@ -52,7 +52,6 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	int slots[10];
 	u8 buf[17];
 	int ret;
-	u32 finger_num = 0x0;
 	int i;
 	u16 x, y;
 	int size = 0;
