@@ -55,9 +55,8 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 	u8 i;
 
 	ret = i2c_master_recv(data->client, buf, bufsize);
-	if (ret != bufsize) {
+	if (ret != bufsize)
 		return IRQ_HANDLED;
-	}
 
 	if (buf[0] != ZET62_VALID_PACKET)
 		return IRQ_HANDLED;
