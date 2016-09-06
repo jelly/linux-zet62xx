@@ -22,6 +22,7 @@
 #define ZET62_TS_NAME "zet62xx"
 #define CMD_INFO 0xB2
 #define CMD_INFO_LENGTH 17
+#define ZET62_VALID_PACKET 0x3c
 
 struct zet62xx_data {
 	struct i2c_client *client;
@@ -61,7 +62,7 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 		return IRQ_HANDLED;
 	}
 
-	if (buf[0] == 0x3c) {
+	if (buf[0] == ZET62_VALID_PACKET) {
 		for (i = 0; i < data->fingernum; i++) {
 			if (!(buf[i / 8 + 1] & (0x80 >> (i % 8))))
 				continue;
