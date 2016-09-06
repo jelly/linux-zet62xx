@@ -47,15 +47,12 @@ static void zet62_ts_stop(struct input_dev *dev)
 static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 {
 	struct zet62xx_data *data = dev_id;
-	struct input_mt_pos touches[data->fingernum];
 	int ret;
-	int slots[data->fingernum];
 	// First 3 bytes are an identifier, two bytes of finger data.
 	// X, Y data per finger is 4 bytes.
 	u8 bufsize = 3 + 4 * data->fingernum;
 	u8 buf[bufsize];
 	u8 i;
-	u8 size = 0;
 
 	ret = i2c_master_recv(data->client, buf, bufsize);
 	if (ret != bufsize) {
@@ -67,19 +64,12 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 			if (!(buf[i / 8 + 1] & (0x80 >> (i % 8))))
 				continue;
 
-			touches[i].x = ((buf[i + 3] >> 4) << 8) + buf[i + 4];
-			touches[i].y = ((buf[i + 3] & 0xF) << 8) + buf[i + 5];
-
-			size++;
-		}
-
-		input_mt_assign_slots(data->input, slots, touches, size, 0);
-
-		for (i = 0; i < size; i++) {
-			input_mt_slot(data->input, slots[i]);
+			input_mt_slot(data->input, i);
 			input_mt_report_slot_state(data->input, MT_TOOL_FINGER, true);
-			input_event(data->input, EV_ABS, ABS_MT_POSITION_X, touches[i].x);
-			input_event(data->input, EV_ABS, ABS_MT_POSITION_Y, touches[i].y);
+			input_event(data->input, EV_ABS, ABS_MT_POSITION_X,
+					((buf[i + 3] >> 4) << 8) + buf[i + 4]);
+			input_event(data->input, EV_ABS, ABS_MT_POSITION_Y,
+					((buf[i + 3] & 0xF) << 8) + buf[i + 5]);
 		}
 
 		input_mt_sync_frame(data->input);
@@ -115,7 +105,7 @@ static int zet62_ts_probe(struct i2c_client *client, const struct i2c_device_id 
 		return -ENODEV;
 	}
 
-	ret = i2c_master_recv(client, buf, CMD_INFO_LENGTH);
+	ret = i2c_master_recv(client, buf, ZET62_CMD_INFO_LENGTH);
 	if (ret < 0) {
 		dev_err(dev, "cannot retrieve touchpanel info data : %d\n", ret);
 		return -ENODEV;
