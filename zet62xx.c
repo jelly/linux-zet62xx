@@ -89,7 +89,6 @@ static irqreturn_t irqreturn_t_zet62xx(int irq, void *dev_id)
 		dev_info(dev, "invalid data\n");
 	}
 
-
 	return IRQ_HANDLED;
 }
 
