@@ -20,9 +20,9 @@
 #include <linux/input/touchscreen.h>
 #include <linux/module.h>
 
-#define ZET62_CMD_INFO 0xB2
-#define ZET62_CMD_INFO_LENGTH 17
-#define ZET62_VALID_PACKET 0x3c
+#define ZET6223_CMD_INFO 0xB2
+#define ZET6223_CMD_INFO_LENGTH 17
+#define ZET6223_VALID_PACKET 0x3c
 
 struct zet6223_data {
 	struct i2c_client *client;
@@ -57,7 +57,7 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 	if (ret != bufsize)
 		return IRQ_HANDLED;
 
-	if (buf[0] != ZET62_VALID_PACKET)
+	if (buf[0] != ZET6223_VALID_PACKET)
 		return IRQ_HANDLED;
 
 	for (i = 0; i < data->fingernum; i++) {
@@ -83,8 +83,8 @@ static int zet6223_probe(struct i2c_client *client, const struct i2c_device_id *
 	struct device *dev = &client->dev;
 	struct zet6223_data *data;
 	struct input_dev *input;
-	u8 buf[ZET62_CMD_INFO_LENGTH];
-	u8 cmd = ZET62_CMD_INFO;
+	u8 buf[ZET6223_CMD_INFO_LENGTH];
+	u8 cmd = ZET6223_CMD_INFO;
 	int ret;
 
 	if (!client->irq) {
@@ -102,7 +102,7 @@ static int zet6223_probe(struct i2c_client *client, const struct i2c_device_id *
 		return -ENODEV;
 	}
 
-	ret = i2c_master_recv(client, buf, ZET62_CMD_INFO_LENGTH);
+	ret = i2c_master_recv(client, buf, ZET6223_CMD_INFO_LENGTH);
 	if (ret < 0) {
 		dev_err(dev, "cannot retrieve touchpanel info data:  %d\n", ret);
 		return -ENODEV;
