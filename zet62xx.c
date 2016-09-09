@@ -158,6 +158,8 @@ static int zet6223_probe(struct i2c_client *client,
 		return ret;
 	}
 
+	zet6223_stop(input);
+
 	ret = input_register_device(input);
 	if (ret)
 		return ret;
