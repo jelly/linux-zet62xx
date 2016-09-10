@@ -52,8 +52,10 @@ static void zet6223_stop(struct input_dev *dev)
 static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 {
 	struct zet6223_data *data = dev_id;
-	// First 3 bytes are an identifier, two bytes of finger data.
-	// X, Y data per finger is 4 bytes.
+	/*
+	 * First 3 bytes are an identifier, two bytes of finger data.
+	 * X, Y data per finger is 4 bytes.
+	 */
 	u8 bufsize = 3 + 4 * data->fingernum;
 	u8 buf[bufsize];
 	u8 i;
