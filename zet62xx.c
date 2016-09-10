@@ -144,7 +144,7 @@ static int zet6223_probe(struct i2c_client *client,
 	input->close = zet6223_stop;
 
 	ret = input_mt_init_slots(input, data->fingernum,
-		INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED | INPUT_MT_TRACK);
+		INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED);
 	if (ret)
 		return ret;
 
