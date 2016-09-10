@@ -29,13 +29,13 @@ sun8i-a23-q8-tablet.dts. And uses and ZET6221 touchscreen.
 
 	//clock-frequency = <400000>;
 
-	zet62xx: touchscreen@76 {
-		 compatible = "zeitec,zet62xx";
+	zet6223: touchscreen@76 {
+		 compatible = "zeitec,zet6223";
 		 reg = <0x76>;
 		 interrupt-parent = <&pio>;
 		 interrupts = <1 5 IRQ_TYPE_EDGE_FALLING>; /* PB5 */
 		 power-gpios = <&pio 7 1 GPIO_ACTIVE_HIGH>; /* PH1 */
-		 touchscreen-fw-name = "zeitec/zet62xx.fw";
+		 touchscreen-fw-name = "zeitec/zet6223.fw";
 	};
 };
 
@@ -63,13 +63,13 @@ firmware to be loaded into the device.
 		reg = <0x51>;
 	};
 
-	zet62xx: touchscreen@76 {
-		 compatible = "zeitec,zet62xx";
+	zet6223: touchscreen@76 {
+		 compatible = "zeitec,zet6223";
 		 reg = <0x76>;
 		 interrupt-parent = <&pio>;
 		 interrupts = <6 11 IRQ_TYPE_EDGE_FALLING>; /* PG11 */
 		 power-gpios = <&pio 1 3 GPIO_ACTIVE_HIGH>; /* PB3 */
-		 touchscreen-fw-name = "zeitec/zet62xx.fw";
+		 touchscreen-fw-name = "zeitec/zet6223.fw";
 	};
 };
 ```
