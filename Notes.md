@@ -19,7 +19,7 @@ To get I2C working
 ------------------
 
 Add the following to the dts file for your tablet, dts file I used was:
-sun8i-a23-q8-tablet.dts
+sun8i-a23-q8-tablet.dts. And uses and ZET6221 touchscreen.
 
 ```
 &i2c0 {
