@@ -35,18 +35,18 @@ struct zet6223_data {
 
 static int zet6223_start(struct input_dev *dev)
 {
-		struct zet6223_data *data = input_get_drvdata(dev);
+	struct zet6223_data *data = input_get_drvdata(dev);
 
-		enable_irq(data->client->irq);
+	enable_irq(data->client->irq);
 
-		return 0;
+	return 0;
 }
 
 static void zet6223_stop(struct input_dev *dev)
 {
-		struct zet6223_data *data = input_get_drvdata(dev);
+	struct zet6223_data *data = input_get_drvdata(dev);
 
-		disable_irq(data->client->irq);
+	disable_irq(data->client->irq);
 }
 
 static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
