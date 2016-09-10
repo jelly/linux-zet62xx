@@ -34,14 +34,7 @@ sun8i-a23-q8-tablet.dts
 		 reg = <0x76>;
 		 interrupt-parent = <&pio>;
 		 interrupts = <1 5 IRQ_TYPE_EDGE_FALLING>; /* PB5 */
-		 pinctrl-names = "default";
-		 pinctrl-0 = <&ts_power_pin_mid2407>;
 		 power-gpios = <&pio 7 1 GPIO_ACTIVE_HIGH>; /* PH1 */
-		 touchscreen-size-x = <800>;
-		 touchscreen-size-y = <480>;
-		 touchscreen-inverted-x;
-		 touchscreen-inverted-y;
-		 touchscreen-max-fingers = <5>;
 		 touchscreen-fw-name = "zeitec/zet62xx.fw";
 	};
 };
