@@ -63,4 +63,8 @@ int main(int argc, char *argv[])
 
 	usleep(20000);
 
+	int erase_cmd[1] = {0x24};
+	ret = write(fd, erase_cmd, 1);
+	assert(ret == 1);
+
 }
