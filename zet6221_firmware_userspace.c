@@ -24,16 +24,16 @@ int main(int argc, char *argv[])
 
 
 	printf("Send password\n");
-	u8 pwd_cmd[3] = {0x20, 0xC5, 0x9D};
+	int pwd_cmd[3] = {0x20, 0xC5, 0x9D};
 	ret = write(fd, pwd_cmd, 3);
 	assert(ret == 3);
 
         usleep(20000);
 
-	u8 sfr_cmd[1] = {0x2C};
-	u8 sfr_in_data[16];
+	int sfr_cmd[1] = {0x2C};
+	int sfr_in_data[16];
 	// Otherwise sfr_cmd_data[0] is random garbage
-	u8 sfr_cmd_data[17] = {0};
+	int sfr_cmd_data[17] = {0};
 
 	write(fd, sfr_cmd, 1);
 	assert(ret == 1);
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 		sfr_cmd_data[i+1] = sfr_in_data[i];
 	}
 
-	if (sfr_in_data[14] == 0x3D) // Operation failed?
+	if (sfr_in_data[14] == 0x3D) { // Operation failed?
 		sfr_cmd_data[0] = 0x2D;
 		ret = write(fd, sfr_cmd, 1);
 		assert(ret == 1);
@@ -59,10 +59,8 @@ int main(int argc, char *argv[])
 		sfr_cmd_data[0] = 0x2B;
 		ret = write(fd, sfr_cmd_data, 17);
 		assert(ret == 17);
-
 	}
 
 	usleep(20000);
 
-	printf("Mass erase\n");
 }
