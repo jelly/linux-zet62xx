@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
+#include "zet6221_fw.h"
+
 #define SLAVE_ADDR 0x76
 
 int main(int argc, char *argv[])
@@ -67,4 +69,40 @@ int main(int argc, char *argv[])
 	ret = write(fd, erase_cmd, 1);
 	assert(ret == 1);
 
+	usleep(20000);
+
+	unsigned int buflen = sizeof(zeitec_zet622x_firmware) / sizeof(char);
+	static unsigned char zeitec_page[130];
+	int buf_index = 0;
+	int buf_page = 0;
+
+	while (buflen > 0) {
+		memset(zeitec_page, 0x00, 130);
+		if (buflen > 128) {
+			printf("buflen bigger then 128\n");
+			for (unsigned int i = 0; i < 128; i++ ) {
+				zeitec_page[i+2] = zeitec_zet622x_firmware[buf_index];
+				buf_index++;
+			}
+			zeitec_page[0] = 0x22;
+			zeitec_page[1] = 0;
+			buflen -= 128;
+		} else {
+			printf("buflen smaller then 128\n");
+			for(unsigned int i =0; i < buflen; i++) {
+				zeitec_page[i+2] = zeitec_zet622x_firmware[buf_index];
+				buf_index++;
+			}
+			zeitec_page[0] = 0x22;
+			zeitec_page[1] = 0;
+			buflen = 0;
+		}
+
+		printf("write a firmware page\n");
+		ret = write(fd, zeitec_page, 130);
+		assert(ret == 130);
+
+		usleep(200000);
+		buf_page++;
+	}
 }
