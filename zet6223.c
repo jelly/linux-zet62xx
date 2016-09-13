@@ -59,6 +59,7 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 	u8 bufsize = 3 + 4 * data->fingernum;
 	u8 buf[bufsize];
 	u8 i;
+	u16 finger_bits;
 	int ret;
 
 	ret = i2c_master_recv(data->client, buf, bufsize);
@@ -70,8 +71,9 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 	if (buf[0] != ZET6223_VALID_PACKET)
 		return IRQ_HANDLED;
 
+	finger_bits = get_unaligned_be16(buf + 1);
 	for (i = 0; i < data->fingernum; i++) {
-		if (!(buf[i / 8 + 1] & (0x80 >> (i % 8))))
+		if (!(finger_bits & BIT(15 - i )))
 			continue;
 
 		input_mt_slot(data->input, i);
