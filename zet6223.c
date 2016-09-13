@@ -180,6 +180,11 @@ static int zet6223_probe(struct i2c_client *client,
 	return 0;
 }
 
+static const struct of_device_id zet6223_of_match[] = {
+	{ .compatible = "zeitec", "zet6223" },
+	{ }
+};
+
 static const struct i2c_device_id zet6223_id[] = {
 	{ "zet6223", 0},
 	{}
@@ -189,6 +194,7 @@ MODULE_DEVICE_TABLE(i2c, zet6223_id);
 static struct i2c_driver zet6223_driver = {
 	.driver = {
 		.name = "zet6223",
+		.of_match_table = zet6223_of_match,
 	},
 	.probe = zet6223_probe,
 	.id_table = zet6223_id
