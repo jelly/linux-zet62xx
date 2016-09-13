@@ -26,7 +26,7 @@
 #define ZET6223_VALID_PACKET 0x3c
 
 struct zet6223_data {
-	struct gpio_desc *power_gpios;
+	struct gpio_desc *reset_gpios;
 	struct i2c_client *client;
 	struct input_dev *input;
 	struct touchscreen_properties prop;
@@ -109,11 +109,11 @@ static int zet6223_probe(struct i2c_client *client,
 	if (!data)
 		return -ENOMEM;
 
-	data->power_gpios = devm_gpiod_get(dev, "power", GPIOD_OUT_HIGH);
-	if (IS_ERR(data->power_gpios)) {
-		error = PTR_ERR(data->power_gpios);
+	data->reset_gpios = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+	if (IS_ERR(data->reset_gpios)) {
+		error = PTR_ERR(data->reset_gpios);
 		if (error != -EPROBE_DEFER)
-			dev_err(dev, "Error getting power gpio: %d\n", error);
+			dev_err(dev, "Error getting reset gpio: %d\n", error);
 		return error;
 	}
 
