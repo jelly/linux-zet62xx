@@ -4,6 +4,7 @@ Updating FIRMWARE
 Userspace program is located in zet6221_firmware_userspace.c
 
 * Disable reset pin (set it low)
+  ./pio -m 'PB5<1><0><1><0>'
 * msleep(1)
 * send password
   u8 ts_sndpwd_cmd[3] = {0x20,0xC5,0x9D};
@@ -81,6 +82,7 @@ Userspace program is located in zet6221_firmware_userspace.c
   }
 
   * enable irq again (GPIO Pin)
+  ./pio -m 'PB5<4><0><1><1>'
 
   * msleep(200);
 
