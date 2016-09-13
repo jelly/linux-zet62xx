@@ -66,7 +66,7 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 	if (ret != bufsize) {
 		dev_err_ratelimited(&data->client->dev, "Error reading touchscreen data: %d\n", ret);
 		return IRQ_HANDLED;
-	}	
+	}
 
 	if (buf[0] != ZET6223_VALID_PACKET)
 		return IRQ_HANDLED;
