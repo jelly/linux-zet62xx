@@ -123,7 +123,7 @@ static int zet6223_probe(struct i2c_client *client,
 
 	ret = i2c_master_recv(client, buf, ZET6223_CMD_INFO_LENGTH);
 	if (ret < 0) {
-		dev_err(dev, "cannot retrieve touchpanel info:  %d\n", ret);
+		dev_err(dev, "cannot retrieve touchpanel info: %d\n", ret);
 		return -ENODEV;
 	}
 
