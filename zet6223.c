@@ -51,6 +51,7 @@ static void zet6223_stop(struct input_dev *dev)
 
 static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 {
+	struct device *dev = &data->client->dev;
 	struct zet6223_data *data = dev_id;
 	/*
 	 * First 3 bytes are an identifier, two bytes of finger data.
@@ -64,7 +65,7 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 
 	ret = i2c_master_recv(data->client, buf, bufsize);
 	if (ret != bufsize) {
-		dev_err_ratelimited(&data->client->dev, "Error reading touchscreen data: %d\n", ret);
+		dev_err_ratelimited(dev, "Error reading input data: %d\n", ret);
 		return IRQ_HANDLED;
 	}
 
@@ -73,7 +74,7 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 
 	finger_bits = get_unaligned_be16(buf + 1);
 	for (i = 0; i < data->fingernum; i++) {
-		if (!(finger_bits & BIT(15 - i )))
+		if (!(finger_bits & BIT(15 - i)))
 			continue;
 
 		input_mt_slot(data->input, i);
@@ -132,8 +133,7 @@ static int zet6223_probe(struct i2c_client *client,
 	data->fingernum = buf[15] & 0x7F;
 	if (data->fingernum > 16) {
 		data->fingernum = 16;
-		dev_warn(dev, "touchpanel reported more then 16 fingers \
-			limit to 16 fingers");
+		dev_warn(dev, "touchpanel reports more then 16 fingers, limit to 16");
 	}
 
 	input = devm_input_allocate_device(dev);
