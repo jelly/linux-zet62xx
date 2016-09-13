@@ -64,6 +64,8 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 	ret = i2c_master_recv(data->client, buf, bufsize);
 	if (ret != bufsize)
 		return IRQ_HANDLED;
+	else
+		dev_err_ratelimited(&data->client->dev, "Error reading touchscreen data: %d\n", ret);
 
 	if (buf[0] != ZET6223_VALID_PACKET)
 		return IRQ_HANDLED;
