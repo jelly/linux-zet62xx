@@ -128,6 +128,11 @@ static int zet6223_probe(struct i2c_client *client,
 	}
 
 	data->fingernum = buf[15] & 0x7F;
+	if (data->fingernum > 16) {
+		data->fingernum = 16;
+		dev_warn(dev, "touchpanel reported more then 16 fingers \
+			limit to 16 fingers");
+	}
 
 	input = devm_input_allocate_device(dev);
 	if (!input)
