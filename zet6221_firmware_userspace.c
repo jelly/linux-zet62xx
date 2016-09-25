@@ -34,13 +34,12 @@ int main(int argc, char *argv[])
         usleep(20000);
 
 	int sfr_cmd[1] = {0x2C};
-	int sfr_in_data[16];
-	// Otherwise sfr_cmd_data[0] is random garbage
-	int sfr_cmd_data[17] = {0};
-
 	write(fd, sfr_cmd, 1);
 	assert(ret == 1);
 
+	int sfr_in_data[16];
+	// Otherwise sfr_cmd_data[0] is random garbage
+	int sfr_cmd_data[17] = {0};
 	ret = read(fd, sfr_in_data, 16);
 	assert(ret == 16);
 
