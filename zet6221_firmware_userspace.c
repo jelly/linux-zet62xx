@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 {
         int fd, ret;
 
-        fd = open("/dev/i2c-1", O_RDWR);
+        fd = open("/dev/i2c-0", O_RDWR);
         assert(fd > 0);
 
         ret = ioctl(fd, I2C_SLAVE, SLAVE_ADDR);
