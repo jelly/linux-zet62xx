@@ -31,3 +31,13 @@
 # Debug files
 *.dSYM/
 *.su
+
+#Kernel Modules
+*.ko
+*.cmd
+
+# YCM
+*.pyc
+
+# vim
+*.swp
