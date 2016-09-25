@@ -3,6 +3,7 @@
 #include <linux/i2c-dev.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
