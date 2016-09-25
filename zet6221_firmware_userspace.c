@@ -25,6 +25,12 @@ int main(int argc, char *argv[])
 	// TODO: how to set gpio pin low..
 	printf("Make sure the RESET PIN IS LOW\n");
 
+	// If gpio is high, otherwise just set the RESET pin low.
+#if 0
+	int ts_cmd[1] = {0xB9};
+	write(fd, ts_cmd, 1);
+	assert(ret == 1);
+#endif
 
 	printf("Send password\n");
 	int pwd_cmd[3] = {0x20, 0xC5, 0x9D};
