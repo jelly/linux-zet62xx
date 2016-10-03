@@ -22,6 +22,8 @@
 #include <linux/input/touchscreen.h>
 #include <linux/module.h>
 
+#include "zet6221_fw.h"
+
 #define ZET6223_CMD_INFO 0xB2
 #define ZET6223_CMD_INFO_LENGTH 17
 #define ZET6223_VALID_PACKET 0x3c
@@ -97,8 +99,15 @@ int upgrade_firmware(struct i2c_client *client, struct gpio_desc *reset_gpios)
 	struct device *dev = &client->dev;
 	u8 cmd[3] = {0x20, 0xC5, 0x9D};
 	u8 ts_in_data[16];
+	u8 sfr_cmd_data[17] = {0};
 	int ret;
 	int i;
+
+	unsigned int buflen = sizeof(zeitec_zet622x_firmware) / sizeof(char);
+	static unsigned char zeitec_page[130];
+	int buf_index = 0;
+	int buf_page = 0;
+	
 	// Set the reset pin low.
 	gpiod_set_raw_value(reset_gpios, 0);
 
@@ -127,10 +136,87 @@ int upgrade_firmware(struct i2c_client *client, struct gpio_desc *reset_gpios)
 		return ret;
 	}
 	for (i = 0; i < 16; i++) {
+		sfr_cmd_data[i+1] = ts_in_data[i];
 		dev_info(dev, "0%x", ts_in_data[i]);
 	}
 
+	if (ts_in_data[14] == 0x3D) {
+		cmd[0] = 0x2D;
+		ret = i2c_master_send(client, cmd, 1);
+		if (ret < 0) {
+			dev_err(dev, "sending sfr failed");
+			return ret;
+		}
+
+		msleep(200);
+
+		sfr_cmd_data[15] = 0x3D;
+		sfr_cmd_data[0] = 0x2B;
+
+		ret = i2c_master_send(client, sfr_cmd_data, 17);
+		if (ret < 0) {
+			dev_err(dev, "writing something failed in if");
+			return ret;
+		}
+	} else {
+		sfr_cmd_data[15] = 0x3D;
+		sfr_cmd_data[0] = 0x2B;
+
+		ret = i2c_master_send(client, sfr_cmd_data, 17);
+		if (ret < 0) {
+			dev_err(dev, "writing something failed in else");
+			return ret;
+		}
+	}
+
 	msleep(200);
+
+	cmd[0] = 0x24;
+	ret = i2c_master_send(client, cmd, 1);
+	if (ret < 0) {
+		dev_err(dev, "sending password failed");
+		return ret;
+	}
+
+	msleep(200);
+
+	while (buflen > 0) {
+		memset(zeitec_page, 0x00, 130);
+		if (buflen > 128) {
+			dev_info(dev, "buflen smaller then 128\n");
+			for (i = 0; i < 128; i++ ) {
+				zeitec_page[i+2] = zeitec_zet622x_firmware[buf_index];
+				buf_index++;
+			}
+			zeitec_page[0] = 0x22;
+			zeitec_page[1] = 0;
+			buflen -= 128;
+		} else {
+			dev_info(dev, "buflen smaller then 128\n");
+			for(i =0; i < buflen; i++) {
+				zeitec_page[i+2] = zeitec_zet622x_firmware[buf_index];
+				buf_index++;
+			}
+			zeitec_page[0] = 0x22;
+			zeitec_page[1] = 0;
+			buflen = 0;
+		}
+
+		dev_info(dev, "write a firmware page\n");
+		ret = i2c_master_send(client, zeitec_page, 130);
+		if (ret < 0) {
+			dev_info(dev, "write a firmware page failed!!\n");
+
+		}
+
+		msleep(200);
+		buf_page++;
+	}
+
+	gpiod_set_raw_value(reset_gpios, 1);
+
+	msleep(200);
+
 	return 0;
 }
 
