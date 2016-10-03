@@ -16,6 +16,7 @@
 #include <linux/gpio/consumer.h>
 #include <linux/interrupt.h>
 #include <linux/i2c.h>
+#include <linux/delay.h>
 #include <linux/input.h>
 #include <linux/input/mt.h>
 #include <linux/input/touchscreen.h>
@@ -91,6 +92,48 @@ static irqreturn_t irqreturn_t_zet6223(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
+int upgrade_firmware(struct i2c_client *client, struct gpio_desc *reset_gpios)
+{
+	struct device *dev = &client->dev;
+	u8 cmd[3] = {0x20, 0xC5, 0x9D};
+	u8 ts_in_data[16];
+	int ret;
+	int i;
+	// Set the reset pin low.
+	gpiod_set_raw_value(reset_gpios, 0);
+
+	msleep(200);
+
+	ret = i2c_master_send(client, cmd, 3);
+	if (ret < 0) {
+		dev_err(dev, "sending password failed");
+		return ret;
+	}
+
+	msleep(200);
+
+	cmd[0] = 0x2C;
+	ret = i2c_master_send(client, cmd, 1);
+	if (ret < 0) {
+		dev_err(dev, "sending sfr failed");
+		return ret;
+	}
+
+	msleep(200);
+
+  	ret = i2c_master_recv(client, ts_in_data, 16);
+	if (ret < 0) {
+		dev_err(dev, "receivng ts data failed");
+		return ret;
+	}
+	for (i = 0; i < 16; i++) {
+		dev_info(dev, "0%x", ts_in_data[i]);
+	}
+
+	msleep(200);
+	return 0;
+}
+
 static int zet6223_probe(struct i2c_client *client,
 			const struct i2c_device_id *id)
 {
@@ -116,6 +159,14 @@ static int zet6223_probe(struct i2c_client *client,
 		if (error != -EPROBE_DEFER)
 			dev_err(dev, "Error getting reset gpio: %d\n", error);
 		return error;
+	}
+
+	ret = upgrade_firmware(client, data->reset_gpios);
+	if (ret < 0) {
+		dev_err(dev, "touchpanel firmware upgrade: %d\n", ret);
+		return -ENODEV;
+	} else {
+		dev_err(dev, "touchpanel firmware upgrade didn't FAIL: %d\n", ret);
 	}
 
 	ret = i2c_master_send(client, &cmd, 1);
