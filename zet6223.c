@@ -26,7 +26,6 @@
 #define ZET6223_VALID_PACKET 0x3c
 
 struct zet6223_data {
-	struct gpio_desc *reset_gpios;
 	struct i2c_client *client;
 	struct input_dev *input;
 	struct touchscreen_properties prop;
@@ -99,7 +98,7 @@ static int zet6223_probe(struct i2c_client *client,
 	struct input_dev *input;
 	u8 buf[ZET6223_CMD_INFO_LENGTH];
 	u8 cmd = ZET6223_CMD_INFO;
-	int ret, error;
+	int ret;
 
 	if (!client->irq) {
 		dev_err(dev, "Error no irq specified\n");
@@ -109,14 +108,6 @@ static int zet6223_probe(struct i2c_client *client,
 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
-
-	data->reset_gpios = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-	if (IS_ERR(data->reset_gpios)) {
-		error = PTR_ERR(data->reset_gpios);
-		if (error != -EPROBE_DEFER)
-			dev_err(dev, "Error getting reset gpio: %d\n", error);
-		return error;
-	}
 
 	ret = i2c_master_send(client, &cmd, 1);
 	if (ret < 0) {
